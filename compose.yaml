@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16
+    container_name: postgres-db
+    restart: always
+    env_file:
+      - ./backend/.env 
+    volumes:
+      - basic_auth_postgres:/var/lib/postgresql/data
+    networks:
+    - public
+
+  backend: 
+    build: ./backend
+    image: basic_auth_backend_app_image
+    container_name: basic_auth_backend_app_container
+    hostname: backend_server
+    env_file:
+      - ./backend/.env_backend
+      - ./backend/.env
+
+    ports:
+      - '8000:8000'
+
+    volumes:
+      - ./backend:/app/backend
+
+    depends_on:
+      - db
+
+    networks:
+      - public
+
+  frontend:
+    build: ./frontend
+    image: basic_auth_frontend_app_image
+    container_name: basic_frontend_react_app_container
+    hostname: frontend_server
+    ports:
+      - '80:80'
+
+    volumes:
+      - ./frontend:/app/frontend
+
+    depends_on:
+      - backend
+
+    networks:
+      - public
+      - private
+volumes:
+  basic_auth_postgres:
+
+networks:
+  public:
+  private:
