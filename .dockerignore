@@ -6,6 +6,8 @@ venv/
 .git
 .gitignore
 
+Dockerfile*
+
 *.log
 
 **/__pycache__
